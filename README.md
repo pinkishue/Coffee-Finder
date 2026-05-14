@@ -1,1 +1,366 @@
-# Coffee-Finder
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo4.png">
+    <title>Pontianak Coffee Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-coffee: #3e2723;
+            --medium-coffee: #5d4037;
+            --latte: #8d6e63;
+            --cream: #fdfaf6;
+            --accent-wood: #d7ccc8;
+            --text-dark: #2c1e11;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fef8f2;;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(rgba(62, 39, 35, 0.85), rgba(62, 39, 35, 0.85)), 
+                        url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=2070');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            background: rgba(254, 248, 242, 1);
+            padding: 15px;
+            z-index: 1000;
+            border-bottom: 1px solid var(--accent-wood);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .search-box {
+            padding: 12px 20px;
+            width: 85%;
+            max-width: 500px;
+            border-radius: 30px;
+            border: 1px solid var(--latte);
+            margin-bottom: 15px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: white;
+            border: 1.5px solid var(--medium-coffee);
+            color: var(--medium-coffee);
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover, button.active {
+            background-color: var(--dark-coffee);
+            color: white;
+            border-color: var(--dark-coffee);
+        }
+
+        #cafe-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 30px 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(141, 110, 99, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            font-family: 'Playfair Display', serif;
+            margin: 0 0 8px 0;
+            color: var(--dark-coffee);
+            font-size: 1.25rem;
+        }
+
+        .tags {
+            margin-bottom: 15px;
+            min-height: 25px;
+        }
+
+        .tag {
+            font-size: 0.65rem;
+            background: var(--accent-wood);
+            color: var(--dark-coffee);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin-right: 5px;
+            text-transform: uppercase;
+        }
+
+        .address-link {
+            text-decoration: none;
+            color: var(--latte);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-top: 1px solid #816757;
+            padding-top: 12px;
+            display: block;
+            transition: color 0.2s;
+        }
+
+        .address-link:hover {
+            color: var(--dark-coffee);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: var(--dark-coffee);
+            color: var(--cream);
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            #cafe-list { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Coffee Finder</h1>
+    <p class="subtitle">☕ Find Your Perfect Coffee Spot</p>
+</header>
+
+<div class="sticky-nav">
+    <input type="text" id="searchInput" class="search-box" placeholder="Cari nama cafe..." onkeyup="searchCafe()">
+    <div class="filter-buttons">
+        <button onclick="filterCafe('all')" class="active" id="btn-all">Semua</button>
+        <button onclick="filterCafe('mushola')" id="btn-mushola">🕌 Mushola</button>
+        <button onclick="filterCafe('photobooth')" id="btn-photobooth">📸 Photobooth</button>
+    </div>
+</div>
+
+<div id="cafe-list">
+    </div>
+
+<footer>
+    <p>&copy; 2026 Coffee Finder — Pontianak.</p>
+</footer>
+
+<script>
+    // Data Lengkap 100 Cafe
+    const cafeData = [
+        { name: "Gifel", tags: [], addr: "Jl. KS Tubun, Pontianak" },
+        { name: "Two People", tags: ["mushola", "photobooth"], addr: "Jl. Gusti Hamzah, Pontianak" },
+        { name: "Semera Pancasila", tags: ["mushola", "photobooth"], addr: "Jl. Gusti Hamzah, Pontianak" },
+        { name: "Bara Coffee", tags: ["photobooth"], addr: "Jl. Wono Baru, Pontianak" },
+        { name: "Sediakala", tags: ["mushola"], addr: "Jl. Sulawesi, Pontianak" },
+        { name: "Cattu Ayani", tags: ["mushola"], addr: "Jl. Jend. Ahmad Yani, Pontianak" },
+        { name: "Cattu M Sohor", tags: ["photobooth"], addr: "Jl. M. Sohor, Pontianak" },
+        { name: "Arkadia", tags: ["photobooth"], addr: "Jl. Suprapto, Pontianak" },
+        { name: "UPZ", tags: ["mushola", "photobooth"], addr: "Jl. Komp. Perdana Square, Pontianak" },
+        { name: "Diantara", tags: ["mushola", "photobooth"], addr: "Jl. Patimura, Pontianak" },
+        { name: "La Gramma", tags: ["mushola"], addr: "Jl. Gajah Mada, Pontianak" },
+        { name: "Cetho", tags: [], addr: "Gg. Purnama 8, Pontianak" },
+        { name: "HEIM", tags: ["mushola"], addr: "Jl. Dr. Sutomo, Pontianak" },
+        { name: "Para Space", tags: ["mushola"], addr: "Jl. Moh. Isja, Pontianak" },
+        { name: "Kohvito", tags: ["mushola"], addr: "Jl. Johar, Pontianak" },
+        { name: "Shokunin", tags: [], addr: "Jl. Karya Baru, Pontianak" },
+        { name: "Kopi Kenangan", tags: [], addr: "Jl. Sultan Abdurahman, Pontianak" },
+        { name: "Silang", tags: [], addr: "Jl. Sulawesi, Pontianak" },
+        { name: "Tropic Suprapto", tags: ["mushola"], addr: "Jl. Suprapto, Pontianak" },
+        { name: "KopiLojik", tags: ["mushola"], addr: "Jl. Teuku Umar, Pontianak" },
+        { name: "Nordu Experience", tags: ["photobooth"], addr: "Jl. S. Parman, Pontianak" },
+        { name: "Haruna", tags: ["mushola", "photobooth"], addr: "Jl. Teuku Umar, Pontianak" },
+        { name: "Saujana", tags: ["photobooth"], addr: "Jl. Akcaya II, Pontianak" },
+        { name: "LDK Street", tags: ["photobooth"], addr: "Jl. Sulawesi, Pontianak " },
+        { name: "Luzel Coffee", tags: ["mushola"], addr: "Jl. Perdana, Pontianak" },
+        { name: "Namaku Coffee", tags: [], addr: "Jl. Diponegoro, Pontianak" },
+        { name: "Toko Kami", tags: ["mushola"], addr: "Jl. Suhada, Pontianak" },
+        { name: "Akamreko", tags: ["mushola"], addr: "Jl. Sulawesi, Pontianak" },
+        { name: "Ngopi Diaphen", tags: ["photobooth"], addr: "Jl. Pattimura, Pontianak" },
+        { name: "Project W", tags: [], addr: "Jl. Putri Candramidi, Pontianak" },
+        { name: "Kongshi Kopitiam", tags: ["photobooth"], addr: "Jl. Diponegoro, Pontianak" },
+        { name: "Sunday Attack", tags: [], addr: "Jl. Jend. Ahmad Yani, Pontianak" },
+        { name: "Anomali Coffee", tags: [], addr: "Jl. Mujahidin, Pontianak" },
+        { name: "Kissa House", tags: [], addr: "Jl. WR. Supratman, Pontianak" },
+        { name: "Copy Cotta", tags: [], addr: "Jl. Akcaya II, Pontianak" },
+        { name: "CW Coffee Untan", tags: ["mushola"], addr: "Jl. Tanjung Sari, Pontianak" },
+        { name: "Nordu Sepakat", tags: ["mushola"], addr: "Jl. Sepakat 2, Pontianak" },
+        { name: "1918", tags: ["mushola"], addr: "Jl. Sepakat 2, Pontianak" },
+        { name: "Bermuda Coffee", tags: [], addr: "Jl. Irian, Pontianak" },
+        { name: "Tanabar", tags: [], addr: "Jl. Sulawesi, Pontianak" },
+        { name: "Elaia", tags: [], addr: "Jl. MT. Haryono, Pontianak" },
+        { name: "Weng Coffee Reformasi", tags: [], addr: "Jl. Reformasi, Pontianak" },
+        { name: "Jeda Space", tags: [], addr: "Jl. Jend. A. Yani, Pontianak" },
+        { name: "Nutricula", tags: [], addr: "Jl. M. Sohor, Pontianak" },
+        { name: "Goffee", tags: ["mushola"], addr: "Jl. S.Parman, Pontianak" },
+        { name: "Kiyosu Coffee", tags: [], addr: "Jl. Profesor Dokter H. Hadari Nawawi, Pontianak" },
+        { name: "Cinta Coffee", tags: [], addr: "Jl. Ampera, Pontianak" },
+        { name: "Satu Watt Merdeka", tags: ["mushola"], addr: "Jl. Merdeka, Pontianak" },
+        { name: "Lokale Merdeka", tags: [], addr: "Jl. Merdeka, Pontianak" },
+        { name: "Tumbuh Mujahidin", tags: [], addr: "Jl. Mujahidin, Pontianak" },
+        { name: "Aming Coffee", tags: [], addr: "Jl. H. Abbas, Pontianak" },
+        { name: "Asiang", tags: [], addr: "Jl. Merapi, Pontianak" },
+        { name: "5 CM", tags: [], addr: "Jl. Uray Bawadi, Pontianak" },
+        { name: "Elsana Untan", tags: [], addr: "Blk. T No.137, Bansir Darat, Pontianak" },
+        { name: "The Urban", tags: [], addr: "Jl. Danau Sentarum, Pontianak" },
+        { name: "360 Coffee", tags: [], addr: "Gg. Andayani I, Pontianak" },
+        { name: "First Things First", tags: [], addr: "Jl. Dr. Wahidin, Pontianak" },
+        { name: "Gowi", tags: [], addr: "Jl. Slt. Abdurrahman, Pontianak" },
+        { name: "SatuDua Coffee", tags: [], addr: "Jl. Ampera, Pontianak" },
+        { name: "Nete", tags: [], addr: "Jl. Sungai Raya Dalam, Pontianak" },
+        { name: "Butu Kopi", tags: [], addr: "Jl. Gajah Mada, Pontianak" },
+        { name: "Fore Gajah Mada", tags: [], addr: "Jl. Gajah Mada, Pontianak" },
+        { name: "Tomoro Coffee", tags: [], addr: "Jl. Patimura, Pontianak" },
+        { name: "Bertemoe", tags: [], addr: "Jl. Uray Bawadi, Pontianak" },
+        { name: "Runa Coffee", tags: [], addr: "Jl. Husni Tamrin, Pontianak" },
+        { name: "Rumangsa", tags: ["mushola"], addr: "Jl. Karangan, Pontianak" },
+        { name: "Duduk Dulu", tags: ["mushola"], addr: "Jl. Sepakat 2, Pontianak" },
+        { name: "Kopiocity", tags: [], addr: "Jl. Sepakat 2, Pontianak" },
+        { name: "Raneen Coffee", tags: [], addr: "Jl. WR. Supratman, Pontianak" },
+        { name: "Askara", tags: [], addr: "Jl. Wak Dalek, Pontianak" },
+        { name: "Indigo", tags: [], addr: "Jl. Letjen Suprapto, Pontianak" },
+        { name: "Naoto Coffee", tags: ["mushola"], addr: "Jl. Sepakat I, Pontianak" },
+        { name: "Meramoe", tags: [], addr: "Jl. M. Sohor, Pontianak" },
+        { name: "Titik Kumpul", tags: ["mushola"], addr: "Jl. M. Sohor, Pontianak" },
+        { name: "Narkopika", tags: [], addr: "Jl. Merdeka, Pontianak" },
+        { name: "Lopika Heritage", tags: ["mushola"], addr: "Jl. Teuku Umar, Pontianak" },
+        { name: "Fos Coffee", tags: ["mushola", "photobooth"], addr: "Jl. Karimata, Pontianak" },
+        { name: "Starbucks Merdeka", tags: [], addr: "Jl. Merdeka, Pontianak" },
+        { name: "AOTD", tags: ["mushola"], addr: "Gg. Pak Majid II, Pontianak" },
+        { name: "Rentjana Roastery", tags: [], addr: "Gg. Gn. Malabar, Pontianak" },
+        { name: "Potluck86 X Ricetomeetyou", tags: [], addr: "Jl. Nusa Indah Baru, Pontianak" },
+        { name: "Disela Coffee", tags: [], addr: "Jl. Tanjung Pura, Pontianak" },
+        { name: "Kokotuku", tags: [], addr: "Jl. KS Tubun, Pontianak" },
+        { name: "Get Coffee", tags: ["mushola"], addr: "Jl. Ismail Marzuki, Pontianak" },
+        { name: "Garis", tags: [], addr: "Jl. D.I.Panjaitan,Pontianak" },
+        { name: "Tribecca Coffee", tags: [], addr: "Jl. Hijas, Pontianak" },
+        { name: "Franco’s Coffee", tags: [], addr: "Jl. Gusti Sulung Lelanang, Pontianak" },
+        { name: "Elluna Coffee", tags: [], addr: "Jl. Jend. A. Yani, Pontianak" },
+        { name: "Mero", tags: [], addr: "Jl. KS. Tubun, Pontianak" },
+        { name: "Paskamasala", tags: [], addr: "Gg. Sukarame, Pontianak" },
+        { name: "Kopi Kutunggu", tags: [], addr: "Jl. Reformasi, Pontianak" },
+        { name: "Kayasa", tags: [], addr: "Jl. Letnan Jendral Sutoyo, Pontianak" },
+        { name: "Kiana Coffee", tags: [], addr: "Jl. Uray Bawadi, Pontianak" },
+        { name: "Kopi Menteng", tags: [], addr: "Jl. Jendral A. Yani, Pontianak" },
+        { name: "Rumah Kita", tags: [], addr: "Jl. Karya Bhakti, Pontianak" },
+        { name: "Nativ Space", tags: [], addr: "Jl. Wan Sagaf, Pontianak" },
+        { name: "Lumi Coffee", tags: [], addr: "Gg. Suprapto, Pontianak" },
+        { name: "Uncle Hong Kopi Tiam", tags: [], addr: "Jl. GM. Said, Pontianak" },
+        { name: "Saturaga", tags: [], addr: "Jl. Kutilang, Pontianak" },
+        { name: "Detik", tags: [], addr: "Jl. Putri Candramidi, Pontianak" }
+    ]
+
+    const cafeListElement = document.getElementById('cafe-list');
+
+    // Urutkan nama cafe A-Z
+cafeData.sort((a, b) => a.name.localeCompare(b.name));
+
+// Inisialisasi pertama kali
+displayCafes(cafeData);
+
+    function displayCafes(data) {
+        cafeListElement.innerHTML = '';
+        data.forEach(cafe => {
+            const card = document.createElement('div');
+            card.className = `card ${cafe.tags.join(' ')}`;
+            
+            let tagsHTML = cafe.tags.map(t => `<span class="tag">${t}</span>`).join('');
+            
+            card.innerHTML = `
+                <div>
+                    <h2>${cafe.name}</h2>
+                    <div class="tags">${tagsHTML}</div>
+                </div>
+                <a href="https://www.google.com/maps/search/${encodeURIComponent(cafe.name + ' Pontianak')}" target="_blank" class="address-link">
+                    📍 ${cafe.addr}
+                </a>
+            `;
+            cafeListElement.appendChild(card);
+        });
+    }
+
+    function filterCafe(type) {
+        // Update Active Button
+        document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + type).classList.add('active');
+
+        if (type === 'all') {
+            displayCafes(cafeData);
+        } else {
+            const filtered = cafeData.filter(cafe => cafe.tags.includes(type));
+            displayCafes(filtered);
+        }
+    }
+
+    function searchCafe() {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        const results = cafeData.filter(cafe => cafe.name.toLowerCase().includes(term));
+        if (results.length > 0) {
+        displayCafes(results);
+    } else {
+        cafeListElement.innerHTML = `
+            <div class="not-found-message">
+                Maaf cafenya ga ada nih 😅🙏
+            </div>
+        `;
+    }
+}
+
+    // Inisialisasi pertama kali
+    displayCafes(cafeData);
+</script>
+
+</body>
+</html>
